@@ -8,10 +8,15 @@ const Shape = ({ shapeType, rotation }) => {
       2: [[0, 1], [1, 1], [1, 0], [1, 2]],
       3: [[0, 1], [1, 1], [2, 1], [0, 2]],
       4: [[0, 0], [0, 1], [0, 2], [1, 0]]
-    }
+    },
+        S: {
+          1: [[0,0]]  // Only one configuration, no rotation needed
+        }
   };
 
   const cells = configurations[shapeType][rotation];
+  console.log(cells)
+  console.log(configurations)
   const gridStyle = {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 50px)',
