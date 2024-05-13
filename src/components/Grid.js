@@ -36,7 +36,6 @@ const Grid = () => {
     newGrid = newGrid.map(row => {
       if (row.every(cell => cell !== null)) {
         cleared = true;
-        console.log("Row ",{row},"cleared");
         return Array(9).fill(null);
       }
       return row;
@@ -49,8 +48,6 @@ const Grid = () => {
           newGrid[row][col] = null;
         }
         cleared = true;
-        console.log("Column ",{col},"cleared");
-
       }
     }
 
@@ -74,15 +71,12 @@ const Grid = () => {
             }
           }
           cleared = true;
-          console.log("Block ",{blockFull},"cleared");
-
         }
       }
     }
 
     return { newGrid, cleared };
   };
-
 
   const handleDrop = (e, rowIndex, colIndex) => {
     e.preventDefault();
@@ -99,7 +93,6 @@ const Grid = () => {
       const updatedGrid = placeShapeOnGrid(grid, shapeType, rotation, baseX, baseY);
       const { newGrid, cleared } = clearLines(updatedGrid);
       setGrid(newGrid);
-      console.log("Shape",{shapeType}," placed");
       if (cleared) {
         setScore(prevScore => prevScore + 100);
       }
@@ -109,7 +102,6 @@ const Grid = () => {
     }
   };
 
-  
   const allowDrop = (e) => {
     e.preventDefault();  // Necessary to allow dropping
   };
