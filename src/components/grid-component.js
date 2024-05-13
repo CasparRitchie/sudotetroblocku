@@ -6,14 +6,14 @@ const Grid = () => {
 
   const handleDrop = (e, rowIndex, colIndex) => {
     e.preventDefault();
-    // Check if drop is in the first row and in the first two cells, and if the cell is not already occupied
-    if (rowIndex === 0 && (colIndex === 0 || colIndex === 1) && grid[rowIndex][colIndex] === null) {
+    // Check if the target cell is empty
+    if (grid[rowIndex][colIndex] === null) {
       const newGrid = grid.map(row => [...row]);
       newGrid[rowIndex][colIndex] = 'S';  // Set 'S' for square
       setGrid(newGrid);
       console.log(`Dropped shape at [${rowIndex},${colIndex}]`);
     } else {
-      console.log(`Cannot drop shape at [${rowIndex},${colIndex}], cell already occupied or out of range.`);
+      console.log(`Cannot drop shape at [${rowIndex},${colIndex}], cell already occupied.`);
     }
   };
 
