@@ -1,14 +1,13 @@
 import React from 'react';
-import './App.css';
-import Grid from './components/grid-component';
 import ShapePicker from './components/ShapePicker';
+import Grid from './components/Grid';
+import {SHAPES} from './components/Shapes';
 
 
 function App() {
   return (
     <div className="App">
-      <h1>Sudoku Tetris Game</h1>
-      <ShapePicker />
+      <ShapePicker shapes={SHAPES} />
       <Grid />
     </div>
   );
