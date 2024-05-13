@@ -83,6 +83,7 @@ const Grid = () => {
     return { newGrid, cleared };
   };
 
+
   const handleDrop = (e, rowIndex, colIndex) => {
     e.preventDefault();
     const shapeType = e.dataTransfer.getData("shapeType");
@@ -108,6 +109,7 @@ const Grid = () => {
     }
   };
 
+  
   const allowDrop = (e) => {
     e.preventDefault();  // Necessary to allow dropping
   };

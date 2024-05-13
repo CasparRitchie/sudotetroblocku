@@ -1,26 +1,25 @@
 import React from 'react';
-import {SHAPES} from './Shapes';  // Ensure you import SHAPES here
+import { SHAPES } from './Shapes';
 
 const Shape = ({ shapeType, rotation }) => {
-  const shapeCells = SHAPES[shapeType][rotation];  // Get the specific shape configuration based on type and rotation
-  const gridSize = Math.sqrt(shapeCells.length);  // This is a simplified, not entirely accurate calculation
-
+  const shapeConfiguration = SHAPES[shapeType][rotation];
   const gridStyle = {
     display: 'grid',
-    gridTemplateColumns: `repeat(${gridSize}, 50px)`,
-    gridTemplateRows: `repeat(${gridSize}, 50px)`,
+    gridTemplateColumns: 'repeat(4, 20px)', // Assume max 4 cells wide
+    gridTemplateRows: 'repeat(4, 20px)' // Assume max 4 cells tall
   };
 
   return (
     <div style={gridStyle}>
-      {shapeCells.map((cell, index) => (
-        <div key={index} style={{
-          width: '50px',
-          height: '50px',
-          backgroundColor: '#4CAF50', // You might need logic here to decide when to fill a cell
-          border: cell[0] === 0 && cell[1] === 0 ? '2px solid red' : '1px solid black'  // Example to mark the "pivot" of the shape
-        }}></div>
-      ))}
+      {Array.from({ length: 16 }).map((_, index) => {
+        const row = Math.floor(index / 4);
+        const col = index % 4;
+        const isFilled = shapeConfiguration.some(([dx, dy]) => dx === col && dy === row);
+        return (
+          <div key={index} style={{ width: '20px', height: '20px', backgroundColor: isFilled ? '#4CAF50' : 'transparent', border: '1px solid #ccc' }}>
+          </div>
+        );
+      })}
     </div>
   );
 };
