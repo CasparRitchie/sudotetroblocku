@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import ShapePicker from './components/ShapePicker';
 import Grid from './components/Grid';
-import {SHAPES} from './components/Shapes';
-
 
 function App() {
+  const [shapePlaced, setShapePlaced] = useState(false);
+
+  const handleShapePlaced = useCallback(() => {
+    setShapePlaced(prev => !prev); // Toggle to trigger re-render
+  }, []);
+
   return (
     <div className="App">
-      <ShapePicker shapes={SHAPES} />
-      <Grid />
+      <ShapePicker onShapePlaced={handleShapePlaced} />
+      <Grid onShapePlaced={handleShapePlaced} />
     </div>
   );
 }

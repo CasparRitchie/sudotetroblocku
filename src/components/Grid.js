@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Grid.css';
 import { SHAPES } from './Shapes';
 
-const Grid = () => {
+const Grid = (props) => {
   const [grid, setGrid] = useState(Array(9).fill(Array(9).fill(null)));
   const [score, setScore] = useState(0);
 
@@ -75,7 +75,10 @@ const Grid = () => {
       }
     }
 
-    return { newGrid, cleared };
+    if (cleared) {
+      setScore(score + 100);  // Update the score state directly
+    }
+    return newGrid;
   };
 
   const handleDrop = (e, rowIndex, colIndex) => {
@@ -91,12 +94,12 @@ const Grid = () => {
 
     if (canPlaceShape(grid, shapeType, rotation, baseX, baseY)) {
       const updatedGrid = placeShapeOnGrid(grid, shapeType, rotation, baseX, baseY);
-      const { newGrid, cleared } = clearLines(updatedGrid);
+      const newGrid = clearLines(updatedGrid);  // Ensure newGrid is used after clearing
       setGrid(newGrid);
-      if (cleared) {
-        setScore(prevScore => prevScore + 100);
-      }
       console.log(`Placed shape at [${rowIndex},${colIndex}]`);
+      if (props.onShapePlaced) {
+        props.onShapePlaced();
+      }
     } else {
       console.log(`Cannot place shape at [${rowIndex},${colIndex}]`);
     }
