@@ -3,6 +3,9 @@ import { SHAPES } from './Shapes';
 
 const Shape = ({ shapeType, rotation }) => {
   const shapeConfiguration = SHAPES[shapeType][rotation];
+
+  console.log('Rendering shape:', shapeType, 'Rotation:', rotation, 'Configuration:', shapeConfiguration);
+
   const gridStyle = {
     display: 'grid',
     gridTemplateColumns: 'repeat(4, 50px)', // Assume max 4 cells wide

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import './Grid.css';
 import { SHAPES } from './Shapes';
 
-const Grid = (props) => {
-  const [grid, setGrid] = useState(Array(9).fill(Array(9).fill(null)));
+const Grid = ({ onShapePlaced }) => {
+  const [grid, setGrid] = useState(Array.from({ length: 9 }, () => Array(9).fill(null)));
   const [score, setScore] = useState(0);
 
   const canPlaceShape = (grid, shapeType, rotation, baseX, baseY) => {
@@ -85,21 +85,21 @@ const Grid = (props) => {
     e.preventDefault();
     const shapeType = e.dataTransfer.getData("shapeType");
     const rotation = parseInt(e.dataTransfer.getData("rotation"), 10);
-    const shape = SHAPES[shapeType][rotation];
+    const shapeConfiguration = SHAPES[shapeType][rotation];
 
-    const minX = Math.min(...shape.map(([dx, _]) => dx));
-    const minY = Math.min(...shape.map(([_, dy]) => dy));
+    const minX = Math.min(...shapeConfiguration.map(([dx, _]) => dx));
+    const minY = Math.min(...shapeConfiguration.map(([_, dy]) => dy));
     const baseX = rowIndex - minX;
     const baseY = colIndex - minY;
+
+    console.log('Attempting to place shape:', shapeType, 'Rotation:', rotation, 'Base X:', baseX, 'Base Y:', baseY);
 
     if (canPlaceShape(grid, shapeType, rotation, baseX, baseY)) {
       const updatedGrid = placeShapeOnGrid(grid, shapeType, rotation, baseX, baseY);
       const newGrid = clearLines(updatedGrid);  // Ensure newGrid is used after clearing
       setGrid(newGrid);
-      console.log(`Placed shape at [${rowIndex},${colIndex}]`);
-      if (props.onShapePlaced) {
-        props.onShapePlaced();
-      }
+      console.log('Shape placed:', shapeType, 'Rotation:', rotation, 'Grid:', newGrid);
+      onShapePlaced();  // Trigger the shapePlaced callback
     } else {
       console.log(`Cannot place shape at [${rowIndex},${colIndex}]`);
     }
