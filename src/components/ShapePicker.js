@@ -11,9 +11,8 @@ const ShapePicker = ({ shapePlaced }) => {
     const randomType = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
     const rotations = Object.keys(SHAPES[randomType]);
     const randomRotation = rotations[Math.floor(Math.random() * rotations.length)];
-    const newShape = { type: randomType, rotation: parseInt(randomRotation) };
-    setSelectedShape(newShape);
-    console.log('New shape picked:', newShape);
+    setSelectedShape({ type: randomType, rotation: parseInt(randomRotation) });
+    console.log('New shape picked:', { type: randomType, rotation: parseInt(randomRotation) });
   };
 
   useEffect(() => {
@@ -26,6 +25,8 @@ const ShapePicker = ({ shapePlaced }) => {
 
   useEffect(() => {
     console.log('Current selected shape:', selectedShape);
+    console.log('Current selected shape:', selectedShape.type);
+    console.log('Current selected shape:', selectedShape.rotation);
   }, [selectedShape]);
 
   return (
@@ -35,7 +36,9 @@ const ShapePicker = ({ shapePlaced }) => {
         onDragStart={(e) => {
           console.log('Dragging shape:', selectedShape);
           e.dataTransfer.setData("shapeType", selectedShape.type);
+          console.log('Shape:', selectedShape.type);
           e.dataTransfer.setData("rotation", selectedShape.rotation.toString());
+          console.log('Rotation:', selectedShape.rotation);
         }}
         style={{ cursor: 'pointer' }}
       >

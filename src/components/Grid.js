@@ -87,10 +87,8 @@ const Grid = ({ onShapePlaced }) => {
     const rotation = parseInt(e.dataTransfer.getData("rotation"), 10);
     const shapeConfiguration = SHAPES[shapeType][rotation];
 
-    const minX = Math.min(...shapeConfiguration.map(([dx, _]) => dx));
-    const minY = Math.min(...shapeConfiguration.map(([_, dy]) => dy));
-    const baseX = rowIndex - minX;
-    const baseY = colIndex - minY;
+    const baseX = rowIndex;
+    const baseY = colIndex;
 
     console.log('Attempting to place shape:', shapeType, 'Rotation:', rotation, 'Base X:', baseX, 'Base Y:', baseY);
 
