@@ -32,26 +32,26 @@ const Grid = ({ onShapePlaced }) => {
     let cleared = false;
     let newGrid = grid.map(row => [...row]);
 
-    // Clear rows
-    newGrid = newGrid.map(row => {
+    // Collect rows, columns, and blocks to clear
+    const rowsToClear = [];
+    const colsToClear = new Set();
+    const blocksToClear = [];
+
+    // Identify full rows
+    newGrid.forEach((row, rowIndex) => {
       if (row.every(cell => cell !== null)) {
-        cleared = true;
-        return Array(9).fill(null);
+        rowsToClear.push(rowIndex);
       }
-      return row;
     });
 
-    // Clear columns
+    // Identify full columns
     for (let col = 0; col < 9; col++) {
       if (newGrid.every(row => row[col] !== null)) {
-        for (let row = 0; row < 9; row++) {
-          newGrid[row][col] = null;
-        }
-        cleared = true;
+        colsToClear.add(col);
       }
     }
 
-    // Clear 3x3 blocks
+    // Identify full 3x3 blocks
     for (let blockStartRow = 0; blockStartRow < 9; blockStartRow += 3) {
       for (let blockStartCol = 0; blockStartCol < 9; blockStartCol += 3) {
         let blockFull = true;
@@ -65,15 +65,34 @@ const Grid = ({ onShapePlaced }) => {
           if (!blockFull) break;
         }
         if (blockFull) {
-          for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < 3; j++) {
-              newGrid[blockStartRow + i][blockStartCol + j] = null;
-            }
-          }
-          cleared = true;
+          blocksToClear.push([blockStartRow, blockStartCol]);
         }
       }
     }
+
+    // Clear identified rows
+    rowsToClear.forEach(rowIndex => {
+      newGrid[rowIndex] = Array(9).fill(null);
+      cleared = true;
+    });
+
+    // Clear identified columns
+    colsToClear.forEach(colIndex => {
+      for (let row = 0; row < 9; row++) {
+        newGrid[row][colIndex] = null;
+      }
+      cleared = true;
+    });
+
+    // Clear identified blocks
+    blocksToClear.forEach(([blockStartRow, blockStartCol]) => {
+      for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+          newGrid[blockStartRow + i][blockStartCol + j] = null;
+        }
+      }
+      cleared = true;
+    });
 
     if (cleared) {
       setScore(score + 100);  // Update the score state directly
@@ -85,10 +104,12 @@ const Grid = ({ onShapePlaced }) => {
     e.preventDefault();
     const shapeType = e.dataTransfer.getData("shapeType");
     const rotation = parseInt(e.dataTransfer.getData("rotation"), 10);
-    // const shapeConfiguration = SHAPES[shapeType][rotation];
+    const shapeConfiguration = SHAPES[shapeType][rotation];
 
-    const baseX = rowIndex;
-    const baseY = colIndex;
+    const minX = Math.min(...shapeConfiguration.map(([dx, _]) => dx));
+    const minY = Math.min(...shapeConfiguration.map(([_, dy]) => dy));
+    const baseX = rowIndex - minX;
+    const baseY = colIndex - minY;
 
     console.log('Attempting to place shape:', shapeType, 'Rotation:', rotation, 'Base X:', baseX, 'Base Y:', baseY);
 
