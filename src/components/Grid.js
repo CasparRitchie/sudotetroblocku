@@ -85,7 +85,7 @@ const Grid = ({ onShapePlaced }) => {
     e.preventDefault();
     const shapeType = e.dataTransfer.getData("shapeType");
     const rotation = parseInt(e.dataTransfer.getData("rotation"), 10);
-    const shapeConfiguration = SHAPES[shapeType][rotation];
+    // const shapeConfiguration = SHAPES[shapeType][rotation];
 
     const baseX = rowIndex;
     const baseY = colIndex;
