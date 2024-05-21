@@ -13,26 +13,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-/* Common cell styling */
-.cell {
-  width: 50px;
-  height: 50px;
-  border: 1px solid black;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Specific grid cell styling if needed */
-.grid-cell {
   background-color: transparent; /* Default background color for grid cells */
 }
 
-/* Shape cell styling */
-.shape-cell {
-  width: 50px;
-  height: 50px;
-  background-color: #4CAF50; /* Specific background color for shape cells */
+.grid-cell.highlighted {
+  border: 2px solid yellow; /* Highlight border color */
+}
+
+.grid-cell.filled {
+  background-color: #4CAF50; /* Green background for filled cells */
 }

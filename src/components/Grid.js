@@ -4,6 +4,7 @@ import { SHAPES } from './Shapes';
 
 const Grid = ({ onShapePlaced }) => {
   const [grid, setGrid] = useState(Array.from({ length: 9 }, () => Array(9).fill(null)));
+  const [highlightedCells, setHighlightedCells] = useState([]);
   const [score, setScore] = useState(0);
 
   const canPlaceShape = (grid, shapeType, rotation, baseX, baseY) => {
@@ -32,26 +33,22 @@ const Grid = ({ onShapePlaced }) => {
     let cleared = false;
     let newGrid = grid.map(row => [...row]);
 
-    // Collect rows, columns, and blocks to clear
     const rowsToClear = [];
     const colsToClear = new Set();
     const blocksToClear = [];
 
-    // Identify full rows
     newGrid.forEach((row, rowIndex) => {
       if (row.every(cell => cell !== null)) {
         rowsToClear.push(rowIndex);
       }
     });
 
-    // Identify full columns
     for (let col = 0; col < 9; col++) {
       if (newGrid.every(row => row[col] !== null)) {
         colsToClear.add(col);
       }
     }
 
-    // Identify full 3x3 blocks
     for (let blockStartRow = 0; blockStartRow < 9; blockStartRow += 3) {
       for (let blockStartCol = 0; blockStartCol < 9; blockStartCol += 3) {
         let blockFull = true;
@@ -70,13 +67,11 @@ const Grid = ({ onShapePlaced }) => {
       }
     }
 
-    // Clear identified rows
     rowsToClear.forEach(rowIndex => {
       newGrid[rowIndex] = Array(9).fill(null);
       cleared = true;
     });
 
-    // Clear identified columns
     colsToClear.forEach(colIndex => {
       for (let row = 0; row < 9; row++) {
         newGrid[row][colIndex] = null;
@@ -84,7 +79,6 @@ const Grid = ({ onShapePlaced }) => {
       cleared = true;
     });
 
-    // Clear identified blocks
     blocksToClear.forEach(([blockStartRow, blockStartCol]) => {
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
@@ -95,7 +89,7 @@ const Grid = ({ onShapePlaced }) => {
     });
 
     if (cleared) {
-      setScore(score + 100);  // Update the score state directly
+      setScore(score => score + 100);
     }
     return newGrid;
   };
@@ -104,8 +98,12 @@ const Grid = ({ onShapePlaced }) => {
     e.preventDefault();
     const shapeType = e.dataTransfer.getData("shapeType");
     const rotation = parseInt(e.dataTransfer.getData("rotation"), 10);
-    const shapeConfiguration = SHAPES[shapeType][rotation];
 
+    if (!shapeType || isNaN(rotation)) {
+      return;
+    }
+
+    const shapeConfiguration = SHAPES[shapeType][rotation];
     const minX = Math.min(...shapeConfiguration.map(([dx, _]) => dx));
     const minY = Math.min(...shapeConfiguration.map(([_, dy]) => dy));
     const baseX = rowIndex - minX;
@@ -115,17 +113,38 @@ const Grid = ({ onShapePlaced }) => {
 
     if (canPlaceShape(grid, shapeType, rotation, baseX, baseY)) {
       const updatedGrid = placeShapeOnGrid(grid, shapeType, rotation, baseX, baseY);
-      const newGrid = clearLines(updatedGrid);  // Ensure newGrid is used after clearing
+      const newGrid = clearLines(updatedGrid);
       setGrid(newGrid);
       console.log('Shape placed:', shapeType, 'Rotation:', rotation, 'Grid:', newGrid);
-      onShapePlaced();  // Trigger the shapePlaced callback
+      onShapePlaced();
+      setHighlightedCells([]);
     } else {
       console.log(`Cannot place shape at [${rowIndex},${colIndex}]`);
+      setHighlightedCells([]);
     }
   };
 
+  const handleDragOver = (e, rowIndex, colIndex) => {
+    e.preventDefault();
+    const shapeType = e.dataTransfer.getData("shapeType");
+    const rotation = parseInt(e.dataTransfer.getData("rotation"), 10);
+
+    if (!shapeType || isNaN(rotation)) {
+      return;
+    }
+
+    const shapeConfiguration = SHAPES[shapeType][rotation];
+    const minX = Math.min(...shapeConfiguration.map(([dx, _]) => dx));
+    const minY = Math.min(...shapeConfiguration.map(([_, dy]) => dy));
+    const baseX = rowIndex - minX;
+    const baseY = colIndex - minY;
+
+    const highlighted = shapeConfiguration.map(([dx, dy]) => [baseX + dx, baseY + dy]);
+    setHighlightedCells(highlighted);
+  };
+
   const allowDrop = (e) => {
-    e.preventDefault();  // Necessary to allow dropping
+    e.preventDefault();
   };
 
   return (
@@ -134,9 +153,12 @@ const Grid = ({ onShapePlaced }) => {
         <div
           key={`${rowIndex}-${colIndex}`}
           onDrop={(e) => handleDrop(e, rowIndex, colIndex)}
-          onDragOver={allowDrop}
-          className="grid-cell"
-          style={{ backgroundColor: cell ? '#4CAF50' : 'transparent', width: '50px', height: '50px', border: '1px solid black' }}
+          onDragOver={(e) => {
+            allowDrop(e);
+            handleDragOver(e, rowIndex, colIndex);
+          }}
+          onDragLeave={() => setHighlightedCells([])}
+          className={`grid-cell ${highlightedCells.some(([x, y]) => x === rowIndex && y === colIndex) ? 'highlighted' : ''} ${cell ? 'filled' : ''}`}
         >
           {cell}
         </div>

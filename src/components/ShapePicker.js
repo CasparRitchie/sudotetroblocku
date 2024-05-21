@@ -25,8 +25,6 @@ const ShapePicker = ({ shapePlaced }) => {
 
   useEffect(() => {
     console.log('Current selected shape:', selectedShape);
-    console.log('Current selected shape:', selectedShape.type);
-    console.log('Current selected shape:', selectedShape.rotation);
   }, [selectedShape]);
 
   return (
@@ -36,9 +34,7 @@ const ShapePicker = ({ shapePlaced }) => {
         onDragStart={(e) => {
           console.log('Dragging shape:', selectedShape);
           e.dataTransfer.setData("shapeType", selectedShape.type);
-          console.log('Shape:', selectedShape.type);
           e.dataTransfer.setData("rotation", selectedShape.rotation.toString());
-          console.log('Rotation:', selectedShape.rotation);
         }}
         style={{ cursor: 'pointer' }}
       >
